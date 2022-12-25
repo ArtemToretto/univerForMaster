@@ -1,0 +1,60 @@
+﻿@model PagedList.IPagedList<aspNETuniversity.Models.Specialization>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+@using (Html.BeginForm())
+{
+    <p>
+        Find: @Html.TextBox("SearchString")  
+        <input type="submit" value="Search" /></p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                (Cvalification)
+            </th>
+            <th>
+                (Name)
+            </th>
+            <th>
+                FacultyCodeNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cvalification)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FacultyCodeNavigation.FacultyCode)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.SpecCode">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.SpecCode">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.SpecCode">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index",  new { page }))
