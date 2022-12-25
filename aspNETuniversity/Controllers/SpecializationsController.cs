@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using aspNETuniversity.Models;
-using System.Web;
 using X.PagedList;
+
 
 
 namespace aspNETuniversity.Controllers
