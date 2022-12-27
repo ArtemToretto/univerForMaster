@@ -5,37 +5,37 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<h1>Добавить</h1>
 
-<h4>StudGroup</h4>
+<h4>Группа</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="StudGroupCode" class="control-label"></label>
+                <div class="control-label">Шифр группы</div>
                 <input asp-for="StudGroupCode" class="form-control" />
                 <span asp-validation-for="StudGroupCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Year" class="control-label"></label>
+                <div class="control-label">Год набора</div>
                 <input asp-for="Year" class="form-control" />
                 <span asp-validation-for="Year" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SpecializationCode" class="control-label"></label>
+                <div class="control-label">Код специальности</div>
                 <select asp-for="SpecializationCode" class ="form-control" asp-items="ViewBag.SpecializationCode"></select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Добавить" class="btn btn-primary mt-2 mb-1" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Вернуться назад</a>
 </div>
 
 @section Scripts {

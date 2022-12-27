@@ -5,9 +5,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<h1>Изменить</h1>
 
-<h4>Student</h4>
+<h4>Студент</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -15,39 +15,39 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Zachetka" />
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <div class="control-label">Имя</div>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SalaryFather" class="control-label"></label>
+                <div class="control-label">ГЗарплата отца</div>
                 <input asp-for="SalaryFather" class="form-control" />
                 <span asp-validation-for="SalaryFather" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SalaryMother" class="control-label"></label>
+                <div class="control-label">Зарплата матери</div>
                 <input asp-for="SalaryMother" class="form-control" />
                 <span asp-validation-for="SalaryMother" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FamilyKol" class="control-label"></label>
+                <div class="control-label">Количество членов семьи</div>
                 <input asp-for="FamilyKol" class="form-control" />
                 <span asp-validation-for="FamilyKol" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="StudGroupCode" class="control-label"></label>
+                <div class="control-label">Шифр группы</div>
                 <select asp-for="StudGroupCode" class="form-control" asp-items="ViewBag.StudGroupCode"></select>
                 <span asp-validation-for="StudGroupCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Сохранить" class="btn btn-primary mt-2 mb-1" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Вернуться назад</a>
 </div>
 
 @section Scripts {

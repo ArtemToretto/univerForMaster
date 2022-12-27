@@ -155,6 +155,10 @@ namespace aspNETuniversity.Models
                     .IsUnicode(false)
                     .HasColumnName("password");
 
+                entity.Property(e => e.facultyID)
+                    .HasColumnName("facultyID")
+                    .HasColumnType("int");
+
                 entity.HasOne(d => d.RoleNavigation)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.RoleId)

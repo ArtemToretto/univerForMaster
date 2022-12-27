@@ -15,13 +15,24 @@ namespace aspNETuniversity.Controllers
             _logger = logger;
         }
 
- 
+        [Authorize]
         public IActionResult Index()
         {
-            //string role = User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+            string role = "";
+            string login = "";
+
+            if (User.Claims.Any())
+            {
+                role = User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+                login = User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value;
+            }
+
+            ViewBag.Role = role;
+            ViewBag.Login = login;
+
             return View();
         }
-
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();

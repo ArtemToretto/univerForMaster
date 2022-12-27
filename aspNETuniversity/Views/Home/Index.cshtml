@@ -3,6 +3,26 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-2">Добро пожаловать на сайт университета</h1>
+    <h2 class="display-4">Вы вошли как @ViewBag.Login</h2>
+    @if (ViewBag.Role=="admin")
+    {
+        <h3 class="display-6">Вы обладаете правами администратора</h3>
+    }
+    else if (ViewBag.Role=="dean")
+    {
+        <h3 class="display-6">Вы обладаете правами декана факультета</h3>
+    }
+    <div class="container-fluid">
+        <div class="row d-flex">
+            <div class="col d-flex flex-column align-items-center justify-content-center">
+                <hr />
+                <a class="btn btn-outline-primary col-12 btn-lg m-1 mt-3" asp-area="" asp-controller="Faculties" asp-action="Index">Факультеты</a>
+                <a class="btn btn-outline-primary col-12 btn-lg m-1" asp-area="" asp-controller="Specializations" asp-action="Index">Специальности</a>
+                <a class="btn btn-outline-primary col-12 btn-lg m-1" asp-area="" asp-controller="StudGroups" asp-action="Index">Группы</a>
+                <a class="btn btn-outline-primary col-12 btn-lg m-1" asp-area="" asp-controller="Students" asp-action="Index">Студенты</a>
+            </div>
+
+        </div>
+    </div>
 </div>

@@ -5,42 +5,53 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<h1>Добавить</h1>
 
-<h4>Specialization</h4>
+<h4>Специальность</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="SpecCode" class="control-label"></label>
+                <div class="control-label">Код специальности</div>
                 <input asp-for="SpecCode" class="form-control" />
                 <span asp-validation-for="SpecCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Cvalification" class="control-label"></label>
+                <div class="control-label">Квалификация</div>
                 <input asp-for="Cvalification" class="form-control" />
                 <span asp-validation-for="Cvalification" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <div class="control-label">Название</div>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="FacultyCode" class="control-label"></label>
+            @if (ViewBag.Role=="dean")
+            {
+             <div class="form-group">
+                <div class="control-label">Код факультета</div>
+                <input asp-for="FacultyCode" class ="form-control" value=@ViewBag.FacultyCode disabled/>
+             </div>
+            }
+            else
+            {
+             <div class="form-group">
+                <div class="control-label">Код факультета</div>
                 <select asp-for="FacultyCode" class ="form-control" asp-items="ViewBag.FacultyCode"></select>
-            </div>
+            </div> 
+            }
+            
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Добавить" class="btn btn-primary mt-2 mb-1" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Вернуться назад</a>
 </div>
 
 @section Scripts {

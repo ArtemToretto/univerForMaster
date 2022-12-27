@@ -2,36 +2,39 @@
 @using X.PagedList;
 @using X.PagedList.Mvc.Core;
 
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="~/css/PagedList.css" rel="stylesheet" type="text/css" />
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Специальности</h1>
 
+ @if (ViewBag.Role=="admin" || ViewBag.Role=="dean")
+{
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary m-1">Добавить специальность</a>
 </p>
+}
 @using (Html.BeginForm())
 {
     <p>
-        Find: @Html.TextBox("SearchString")  
-        <input type="submit" value="Search" /></p>
+        Поиск: @Html.TextBox("SearchString", null, new { @class= "form-control col-8"})
+        <input type="submit" value="Найти" class="btn btn-outline-secondary btn-sm mt-2" />
+    </p>
 }
 <table class="table">
     <thead>
         <tr>
             <th>
-                (Cvalification)
+                Квалификация
             </th>
             <th>
-                (Name)
+                Название
             </th>
             <th>
-                FacultyCodeNavigation)
+                Код факультета
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -47,9 +50,13 @@
                 @Html.DisplayFor(modelItem => item.FacultyCodeNavigation.FacultyCode)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.SpecCode">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.SpecCode">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.SpecCode">Delete</a>
+                @if (ViewBag.Role=="admin" || ViewBag.Role=="dean" && ViewBag.Faculty==item.FacultyCodeNavigation.FacultyCode.ToString())
+                {
+                    <a asp-action="Edit" asp-route-id="@item.SpecCode" class="btn btn-outline-primary">Изменить</a>
+                    <a asp-action="Delete" asp-route-id="@item.SpecCode" class="btn btn-outline-primary ms-1 me-1">Удалить</a>
+                }
+                <a asp-action="Details" asp-route-id="@item.SpecCode" class="btn btn-outline-secondary">Информация</a>
+
             </td>
         </tr>
 }
@@ -57,4 +64,4 @@
 </table>
 
 Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
-@Html.PagedListPager(Model, page => Url.Action("Index",  new { page }))
+@Html.PagedListPager(Model, page => Url.Action("Index",  new { page, currentFilter = ViewBag.CurrentFilter }))

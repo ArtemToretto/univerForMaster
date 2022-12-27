@@ -6,25 +6,30 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Факультеты</h1>
 
+ @if (ViewBag.Role=="admin")
+{
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary m-1">Добавить факультет</a>
 </p>
+}
+
 @using (Html.BeginForm())
 {
     <p>
-        Find: @Html.TextBox("SearchString")  
-        <input type="submit" value="Search" /></p>
+        Поиск: @Html.TextBox("SearchString", null, new { @class= "form-control col-8"})
+        <input type="submit" value="Найти" class="btn btn-outline-secondary btn-sm mt-2" />
+    </p>
 }
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.DeanName)
+                Имя декана
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FacultyName)
+                Название факультета
             </th>
             <th></th>
         </tr>
@@ -39,9 +44,12 @@
                 @Html.DisplayFor(modelItem => item.FacultyName)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.FacultyCode">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.FacultyCode">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.FacultyCode">Delete</a>
+                @if (ViewBag.Role=="admin" || ViewBag.Role=="dean" && ViewBag.Faculty==item.FacultyCode.ToString())
+                {
+                     <a asp-action="Edit" asp-route-id="@item.FacultyCode" class="btn btn-outline-primary">Изменить</a>
+                     <a asp-action="Delete" asp-route-id="@item.FacultyCode" class="btn btn-outline-primary ms-1 me-1">Удалить</a>
+                }
+                <a asp-action="Details" asp-route-id="@item.FacultyCode" class="btn btn-outline-secondary">Информация</a>
             </td>
         </tr>
 }

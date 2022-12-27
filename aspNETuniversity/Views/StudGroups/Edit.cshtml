@@ -5,9 +5,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<h1>Изменить</h1>
 
-<h4>StudGroup</h4>
+<h4>Группа</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -15,24 +15,24 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="StudGroupCode" />
             <div class="form-group">
-                <label asp-for="Year" class="control-label"></label>
+                <div class="control-label">Год набора</div>
                 <input asp-for="Year" class="form-control" />
                 <span asp-validation-for="Year" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SpecializationCode" class="control-label"></label>
+                <div class="control-label">Код специальности</div>
                 <select asp-for="SpecializationCode" class="form-control" asp-items="ViewBag.SpecializationCode"></select>
                 <span asp-validation-for="SpecializationCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Сохранить" class="btn btn-primary mt-2 mb-1" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Вернуться назад</a>
 </div>
 
 @section Scripts {

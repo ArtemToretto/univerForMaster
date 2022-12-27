@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using aspNETuniversity.Models;
 using X.PagedList;
-
-
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace aspNETuniversity.Controllers
 {
@@ -22,10 +22,33 @@ namespace aspNETuniversity.Controllers
         }
 
         // GET: Specializations
-        public async Task<IActionResult> Index(string searchString, int? page)
+        [Authorize]
+        public async Task<IActionResult> Index(string searchString, int? page, string currentFilter)
         {
+            string role = "";
+            string faculty = "";
+
+            if (User.Claims.Any())
+            {
+                role = User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+                faculty = User.FindFirst(x => x.Type == "facultyID").Value;
+            }
+
+            ViewBag.Role = role;
+            ViewBag.Faculty = faculty;
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewBag.CurrentFilter = searchString;
             int pageSize = 10;
             int pageNumber = (page ?? 1);
+            var lol = ViewBag.SearchString;
             if (!String.IsNullOrEmpty(searchString))
             {
                 var spec = _context.Specializations.Where(s => s.Cvalification.Contains(searchString)
@@ -33,15 +56,18 @@ namespace aspNETuniversity.Controllers
                 spec = spec.Include(s => s.FacultyCodeNavigation);
                 return View(await spec.ToPagedListAsync(pageNumber, pageSize));
             }
+            
             else
             {
                 var univerContext = _context.Specializations.Include(s => s.FacultyCodeNavigation);
                 return View(await univerContext.ToPagedListAsync(pageNumber, pageSize));
             }
- 
+            
+
         }
 
         // GET: Specializations/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Specializations == null)
@@ -61,9 +87,29 @@ namespace aspNETuniversity.Controllers
         }
 
         // GET: Specializations/Create
+        [Authorize(Roles = "admin, dean")]
         public IActionResult Create()
         {
-            ViewData["FacultyCode"] = new SelectList(_context.Facultys, "FacultyCode", "FacultyCode");
+            string role = "";
+            string faculty = "";
+
+            if (User.Claims.Any())
+            {
+                role = User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+                faculty = User.FindFirst(x => x.Type == "facultyID").Value;
+            }
+
+            ViewBag.Role = role;
+            ViewBag.Faculty = faculty;
+
+            if (User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == "dean")
+            {
+                ViewData["FacultyCode"] =User.FindFirst(x => x.Type == "facultyID").Value;
+            }
+            else
+            {
+                ViewData["FacultyCode"] = new SelectList(_context.Facultys, "FacultyCode", "FacultyCode");
+            }
             return View();
         }
 
@@ -72,33 +118,58 @@ namespace aspNETuniversity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin, dean")]
         public async Task<IActionResult> Create([Bind("SpecCode,Cvalification,Name,FacultyCode")] Specialization specialization)
         {
+            TempData["Message"] = "Некорректно заполнены поля";
+
             if (ModelState.IsValid)
             {
+                if (User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == "dean")
+                {
+                    specialization.FacultyCode = int.Parse(User.FindFirst(x => x.Type == "facultyID").Value);
+                }
                 _context.Add(specialization);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FacultyCode"] = new SelectList(_context.Facultys, "FacultyCode", "FacultyCode", specialization.FacultyCode);
+            if (User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == "dean")
+            {
+                ViewData["FacultyCode"] = User.FindFirst(x => x.Type == "facultyID").Value;
+            }
+            else
+            {
+                ViewData["FacultyCode"] = new SelectList(_context.Facultys, "FacultyCode", "FacultyCode");
+            }
             return View(specialization);
         }
 
         // GET: Specializations/Edit/5
+        [Authorize(Roles = "admin, dean")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Specializations == null)
-            {
-                return NotFound();
-            }
 
-            var specialization = await _context.Specializations.FindAsync(id);
-            if (specialization == null)
+            //var specialization = await _context.Specializations.FindAsync(id);
+            var specialization = await _context.Specializations.Include(s => s.FacultyCodeNavigation).FirstOrDefaultAsync(m => m.SpecCode == id);
+            if (specialization != null && User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == "dean" &&
+               !(User.FindFirst(x => x.Type == "facultyID").Value == specialization.FacultyCodeNavigation.FacultyCode.ToString()))
             {
-                return NotFound();
+                return RedirectToAction("Index", "Faculties");
             }
-            ViewData["FacultyCode"] = new SelectList(_context.Facultys, "FacultyCode", "FacultyCode", specialization.FacultyCode);
-            return View(specialization);
+            else
+            {
+                if (id == null || _context.Specializations == null)
+                {
+                    return NotFound();
+                }
+
+                if (specialization == null)
+                {
+                    return NotFound();
+                }
+                ViewData["FacultyCode"] = new SelectList(_context.Facultys, "FacultyCode", "FacultyCode", specialization.FacultyCode);
+                return View(specialization);
+            }
         }
 
         // POST: Specializations/Edit/5
@@ -106,73 +177,86 @@ namespace aspNETuniversity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin, dean")]
         public async Task<IActionResult> Edit(int id, [Bind("SpecCode,Cvalification,Name,FacultyCode")] Specialization specialization)
         {
-            if (id != specialization.SpecCode)
-            {
-                return NotFound();
-            }
+            TempData["Message"] = "Некорректно заполнены поля";
 
-            if (ModelState.IsValid)
-            {
-                try
+            if (id != specialization.SpecCode)
                 {
-                    _context.Update(specialization);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                if (ModelState.IsValid)
                 {
-                    if (!SpecializationExists(specialization.SpecCode))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(specialization);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!SpecializationExists(specialization.SpecCode))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["FacultyCode"] = new SelectList(_context.Facultys, "FacultyCode", "FacultyCode", specialization.FacultyCode);
-            return View(specialization);
+                ViewData["FacultyCode"] = new SelectList(_context.Facultys, "FacultyCode", "FacultyCode", specialization.FacultyCode);
+                return View(specialization);
         }
 
         // GET: Specializations/Delete/5
+        [Authorize(Roles = "admin, dean")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Specializations == null)
+            var specialization = await _context.Specializations.Include(s => s.FacultyCodeNavigation).FirstOrDefaultAsync(m => m.SpecCode == id);
+            if (specialization != null && User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == "dean" &&
+               !(User.FindFirst(x => x.Type == "facultyID").Value == specialization.FacultyCodeNavigation.FacultyCode.ToString()))
             {
-                return NotFound();
+                return RedirectToAction("Index", "Faculties");
+            }
+            else
+            {
+                if (id == null || _context.Specializations == null)
+                {
+                    return NotFound();
+                }
+
+                if (specialization == null)
+                {
+                    return NotFound();
+                }
+
+                return View(specialization);
             }
 
-            var specialization = await _context.Specializations
-                .Include(s => s.FacultyCodeNavigation)
-                .FirstOrDefaultAsync(m => m.SpecCode == id);
-            if (specialization == null)
-            {
-                return NotFound();
-            }
-
-            return View(specialization);
         }
 
         // POST: Specializations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin, dean")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Specializations == null)
-            {
-                return Problem("Entity set 'univerContext.Specializations'  is null.");
-            }
             var specialization = await _context.Specializations.FindAsync(id);
-            if (specialization != null)
-            {
-                _context.Specializations.Remove(specialization);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                if (_context.Specializations == null)
+                {
+                    return Problem("Entity set 'univerContext.Specializations'  is null.");
+                }
+
+                if (specialization != null)
+                {
+                    _context.Specializations.Remove(specialization);
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index)); 
         }
 
         private bool SpecializationExists(int id)

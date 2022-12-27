@@ -15,12 +15,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                .AddCookie(options =>
                {
                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-                   options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                   options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Home/Index");
                    options.ExpireTimeSpan = TimeSpan.FromHours(10);
                });
 
 var app = builder.Build();
 
+app.Environment.EnvironmentName = "Production";
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

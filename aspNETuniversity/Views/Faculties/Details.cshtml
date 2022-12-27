@@ -5,20 +5,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<h1>Информация</h1>
 
 <div>
-    <h4>Faculty</h4>
+    <h4>Факультет</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DeanName)
+            <h6>Имя декана</h6>
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.DeanName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FacultyName)
+            <h6>Название факультета</h6>
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FacultyName)
@@ -26,6 +26,5 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.FacultyCode">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Вернуться назад</a>
 </div>

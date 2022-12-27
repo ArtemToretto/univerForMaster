@@ -1,34 +1,47 @@
-﻿@model IEnumerable<aspNETuniversity.Models.Student>
+﻿@model X.PagedList.IPagedList<aspNETuniversity.Models.Student>
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
 
+<link href="~/css/PagedList.css" rel="stylesheet" type="text/css" />
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Студенты</h1>
 
+
+ @if (ViewBag.Role=="admin" || ViewBag.Role=="dean")
+{
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary m-1">Добавить студента</a>
 </p>
+}
+@using (Html.BeginForm())
+{
+    <p>
+        Поиск: @Html.TextBox("SearchString", null, new { @class= "form-control col-8"})
+        <input type="submit" value="Найти" class="btn btn-outline-secondary btn-sm mt-2" />
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                Имя
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SalaryFather)
+               Зарплата матери
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SalaryMother)
+                Зарплата отца
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FamilyKol)
+               Количество членов семьи
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StudGroupCodeNavigation)
+               Шифр группы
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -50,11 +63,20 @@
                 @Html.DisplayFor(modelItem => item.StudGroupCodeNavigation.StudGroupCode)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Zachetka">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Zachetka">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Zachetka">Delete</a>
+                 @if (ViewBag.Role=="admin" || ViewBag.Role=="dean" && ViewBag.Faculty==item.StudGroupCodeNavigation.SpecializationCodeNavigation.
+                 FacultyCodeNavigation.FacultyCode.ToString())
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Zachetka" class="btn btn-outline-primary">Изменить</a>
+                    <a asp-action="Delete" asp-route-id="@item.Zachetka" class="btn btn-outline-primary ms-1 me-1">Удалить</a>
+                }
+                <a asp-action="Details" asp-route-id="@item.Zachetka" class="btn btn-outline-secondary">Информация</a>
+                
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index",  new { page, currentFilter = ViewBag.CurrentFilter }))
+
